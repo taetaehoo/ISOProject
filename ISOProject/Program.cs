@@ -3,6 +3,8 @@ using System.IO.Ports;
 
 class Program
 {
+    private static string bufferedString = "";
+
     static void Main()
     {
         string portName = "COM4";
@@ -34,6 +36,26 @@ class Program
     {
         SerialPort serialPort = (SerialPort)sender;
         string receivedData = serialPort.ReadExisting();
-        Console.WriteLine($"수신된 데이터: {receivedData}");
+
+        bufferedString += receivedData;
+        
+        if (getLastChar(receivedData) == ']')
+        {
+            printReceivedData();
+            bufferedString = "";
+        }
+
+    }
+
+    private static char getLastChar(string data)
+    {
+        string trimedData = data.Trim();
+        int trimedDataLength = trimedData.Length;
+        return trimedDataLength > 0 ? trimedData[trimedData.Length - 1] : ' ';
+    }
+
+    private static void printReceivedData()
+    {
+        Console.WriteLine($"수신된 데이터 : {bufferedString.Trim()}");
     }
 }
